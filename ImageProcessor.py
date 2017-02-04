@@ -23,7 +23,7 @@ def preprocess_image(img):
 
 def rotate_image(img, steering_angle):
     angle = np.random.uniform(-5.0, 5.0)
-    return img.rotate(angle, resample=Image.BICUBIC, expand = 0), steering_angle - angle
+    return img.rotate(angle, resample=Image.BICUBIC, expand = 0), steering_angle - angle/25.0
 
 def mirror_image(img, steering_angle):
     if random.random() > 0.5:
@@ -41,16 +41,20 @@ def ImageGenerator(log_data, batch_size=128, augment_data=True):
         X = []
         y = []
         for i in range(0,batch_size):
-            file_name, steering_angle, throttle, brake, speed = log_data[idx]
-            idx = (idx + 1) % num_images
-
+            while True:
+                file_name, steering_angle, throttle, brake, speed = log_data[idx]
+                steering_angle = float(steering_angle)
+                idx = (idx + 1) % num_images
+                if steering_angle >= 0.01 or random.random() < 0.125:
+                    break
+            #print(file_name)
             img = Image.open(file_name)
             dir_name, _, file_name = file_name.split('/')
             # adjust steering angle for left and right camera, respectively
             if "right" in file_name:
-                steering_angle -= side_correction
+                steering_angle = steering_angle - side_correction/25.0
             elif "left" in file_name:
-                steering_angle += side_correction
+                steering_angle = steering_angle + side_correction/25.0
 
             if (augment_data):
                 img, steering_angle = rotate_image(img, steering_angle)
