@@ -12,14 +12,12 @@ def load_driving_log(directory):
 def preprocess_image(img):
     #crop image to remove hood and background
     # remainder is 50 x 320
+    # assumes input is in shape 160 x 320
     img = img.crop((0, 60, 320, 110))
-    # resize to 32x32
-    #img = img.resize((32, 32), resample=Image.BICUBIC)
+    # resize to input dimensions for NVIDIA network
     img = img.resize((200, 66), resample=Image.BICUBIC)
     img = np.array(img).reshape(66, 200,3)
     return np.array(img).astype('float32')
-    #return np.array(img).astype('float32') / 255.0
-    # think about YUV conversion
 
 def rotate_image(img, steering_angle):
     angle = np.random.uniform(-5.0, 5.0)
@@ -36,7 +34,7 @@ def ImageGenerator(log_data, batch_size=128, augment_data=True):
     num_images = len(log_data)
     idx = 0
     side_correction = 5.0
-
+    # we want to keep generating data endlessly, hence
     while True:
         X = []
         y = []
@@ -45,9 +43,10 @@ def ImageGenerator(log_data, batch_size=128, augment_data=True):
                 file_name, steering_angle, throttle, brake, speed = log_data[idx]
                 steering_angle = float(steering_angle)
                 idx = (idx + 1) % num_images
+                # there are to many training images with very small steering angles
+                # so we do not want them all
                 if steering_angle >= 0.01 or random.random() < 0.35:
                     break
-            #print(file_name)
             img = Image.open(file_name)
             dir_name, _, file_name = file_name.split('/')
             # adjust steering angle for left and right camera, respectively
@@ -60,7 +59,7 @@ def ImageGenerator(log_data, batch_size=128, augment_data=True):
                 img, steering_angle = rotate_image(img, steering_angle)
                 img, steering_angle = mirror_image(img, steering_angle)
 
-            # rescale and normalize
+            # rescale images
             img_data = preprocess_image(img)
 
             X.append(img_data)
