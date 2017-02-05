@@ -32,7 +32,7 @@ model.add(Dense(1))
 model.compile(optimizer=Adam(lr=0.0001), loss="mse")
 print(model.count_params())
 print(model.summary())
-with open('model_lin.json', "w") as outfile:
+with open('model.json', "w") as outfile:
     json.dump(model.to_json(), outfile)
 
 
@@ -49,7 +49,7 @@ train_gen = ImageGenerator(data_train, augment_data=True)
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=4, verbose=1,min_lr=1e-7)
 early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')
-model_checkpoint = ModelCheckpoint("model_lin.h5", monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True, mode='auto', period=1)
+model_checkpoint = ModelCheckpoint("model.h5", monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True, mode='auto', period=1)
 
 model.fit_generator(\
   train_gen,\
