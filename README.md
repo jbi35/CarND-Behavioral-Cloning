@@ -64,7 +64,8 @@ model.add(Dense(50, activation='linear'))
 model.add(ELU())
 model.add(Dense(10, activation='linear'))
 model.add(ELU())
-model.add(Dense(1))```
+model.add(Dense(1))
+```
 
 and the following visualization of the architecture from the original [paper](https://arxiv.org/abs/1604.07316)
 
