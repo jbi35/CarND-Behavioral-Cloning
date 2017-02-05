@@ -55,7 +55,7 @@ model.fit_generator(\
   train_gen,\
   #samples_per_epoch=22400,\
   samples_per_epoch=82304,\
-  nb_epoch=10,\
+  nb_epoch=50,\
   validation_data=val_gen,
   nb_val_samples=len(data_val),
   max_q_size=1024,
