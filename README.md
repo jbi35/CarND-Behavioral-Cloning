@@ -19,7 +19,7 @@
 My project includes the following files:
 * model.py containing the script to create and train the model
 * drive.py for driving the car in autonomous mode
-* ImageProcessor for preprocessing the images and implementation of the generator
+* ImageProcessor.py for preprocessing the images and implementation of the generator
 * model.h5 containing a trained convolution neural network
 * model.json containing the description of the network
 * writeup_report.md summarizing the results
@@ -32,15 +32,13 @@ python drive.py model.json
 
 #### 3. Submssion code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works. The python generator is implemented in the file ImageProcessor along with some other preprocessing functions.
+The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works. The python generator is implemented in the file ImageProcessor along with some other preprocessing functions to e.g. crop the images and augment the training data.
 
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with five convolutional layers and 3 fully connected layers as described in this [paper](https://arxiv.org/abs/1604.07316). Before the data is passed to the first convolutional layer, the images are normalized using Keras lambda layer.
-
-The model uses [ELU layers](https://arxiv.org/abs/1511.07289) to introduce nonlinearity, which turned out to work better than RELU activations.
+My model consists of a convolution neural network with five convolutional layers and 3 fully connected layers as described in this [paper](https://arxiv.org/abs/1604.07316). Before the data is passed to the first convolutional layer, the images are normalized using Keras lambda layer. The model uses [ELU layers](https://arxiv.org/abs/1511.07289) to introduce nonlinearity, which turned out to work better than RELU activations.
 
 The model is best summarized by its Keras code:
 
@@ -74,12 +72,14 @@ and the following visualization of the architecture from the original [paper](ht
 #### 2. Attempts to reduce overfitting in the model
 
 The model does not contain dropout layers to reduce overfitting. However,
-the model was trained and validated on different data sets to ensure that the model was not overfitting (code line 46-48 model.py). In addition, the training data is randomly augmentend to avoid overfitting.
+the model was trained and validated on different data sets to ensure that the model was not overfitting (code line 46-48 model.py). It would be easy to add a dropout layer with Keras but deemed unnecessary here.
+In addition, the training data is randomly augmented to avoid overfitting.
+
 
 Specifically, the training images were:
 
 * flipped with a probability of 0.5 (steering angles is then multiplied with -1)
-* rotated by a random angle between -5 and 5 degrees (steering angle is adjusted accordingly
+* rotated by a random angle between -5 and 5 degrees (steering angle is adjusted accordingly)
 
 The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
@@ -99,9 +99,7 @@ The overall strategy for deriving a model architecture was to look at existing a
 
 I found that the NVIDIA architecture worked rather well. I started varying the activation functions and found that elu layers worked better than linear or relu activations.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set and in addition, I augmented the training set as described above. Since the augmentation of the data is to some extend random, the training data is slightly different in each training epoch, which prevents overfitting.
-
-Using the ModelCheckpoint (line 52 model.py ) I made sure to only save the model if performance measured on the validation set improved.
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set and in addition, I augmented the training set as described above. Since the augmentation of the data is to some extend random, the training data is slightly different in each training epoch, which prevents overfitting. Using the ModelCheckpoint (line 52 model.py ) I made sure to only save the model if performance measured on the validation set improved.
 
 The final step was to run the simulator to see how well the car was driving around track one. I first tried this only with the training data provided by Udacity. This, however, did not yield satisfactory results. After generating additional own training data, the results were satisfactory.
 
