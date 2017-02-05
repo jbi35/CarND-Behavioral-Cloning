@@ -45,7 +45,7 @@ def ImageGenerator(log_data, batch_size=128, augment_data=True):
                 file_name, steering_angle, throttle, brake, speed = log_data[idx]
                 steering_angle = float(steering_angle)
                 idx = (idx + 1) % num_images
-                if steering_angle >= 0.01 or random.random() < 0.125:
+                if steering_angle >= 0.01 or random.random() < 0.35:
                     break
             #print(file_name)
             img = Image.open(file_name)
